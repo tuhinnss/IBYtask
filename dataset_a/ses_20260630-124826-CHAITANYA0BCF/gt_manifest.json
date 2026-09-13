@@ -1,0 +1,1038 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "theme_m1_20260630_181750",
+  "theme": "M1",
+  "scope": "segmentation+names+catalog+kb+run_artifacts+splits",
+  "session": {
+    "start_ts": "2026-06-30T12:48:32.620317+00:00",
+    "end_ts": "2026-06-30T13:11:14.178454+00:00",
+    "dwell_scale": 1.4,
+    "noise_rate": 0.15,
+    "noise_blocks": 1
+  },
+  "chunk_split_hint": {
+    "mode": "unknown",
+    "value": null
+  },
+  "processes": [
+    {
+      "code": "A",
+      "family_name": "住民税通知確認",
+      "domain": "hr",
+      "executions": [
+        {
+          "code": "A",
+          "variant": "std",
+          "case_id": "RT-181750-001",
+          "start_ts": "2026-06-30T12:56:37.985328+00:00",
+          "end_ts": "2026-06-30T12:57:06.250845+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-A-1",
+          "seq": 1
+        },
+        {
+          "code": "A",
+          "variant": "std",
+          "case_id": "RT-181750-002",
+          "start_ts": "2026-06-30T12:57:36.502358+00:00",
+          "end_ts": "2026-06-30T12:58:05.919716+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-A-2",
+          "seq": 2
+        },
+        {
+          "code": "A",
+          "variant": "std",
+          "case_id": "RT-181750-003",
+          "start_ts": "2026-06-30T13:01:02.003766+00:00",
+          "end_ts": "2026-06-30T13:01:27.658080+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-A-3",
+          "seq": 3
+        },
+        {
+          "code": "A",
+          "variant": "exc",
+          "case_id": "RT-181750-004",
+          "start_ts": "2026-06-30T13:04:02.385933+00:00",
+          "end_ts": "2026-06-30T13:04:31.961222+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-A-4",
+          "seq": 4
+        },
+        {
+          "code": "A",
+          "variant": "exc",
+          "case_id": "RT-181750-005",
+          "start_ts": "2026-06-30T13:05:34.605486+00:00",
+          "end_ts": "2026-06-30T13:05:59.044743+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-A-5",
+          "seq": 5
+        }
+      ]
+    },
+    {
+      "code": "D",
+      "family_name": "社保・年金補正対応",
+      "domain": "hr",
+      "executions": [
+        {
+          "code": "D",
+          "variant": null,
+          "case_id": "SI-181750-001",
+          "start_ts": "2026-06-30T13:06:36.467639+00:00",
+          "end_ts": "2026-06-30T13:07:15.665985+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "teams"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-D-1",
+          "seq": 1
+        },
+        {
+          "code": "D",
+          "variant": null,
+          "case_id": "SI-181750-002",
+          "start_ts": "2026-06-30T13:08:53.136423+00:00",
+          "end_ts": null,
+          "apps": [
+            "chrome",
+            "notepad",
+            "teams"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-D-2",
+          "seq": 2
+        },
+        {
+          "code": "D",
+          "variant": null,
+          "case_id": "SI-181750-003",
+          "start_ts": "2026-06-30T13:09:32.741170+00:00",
+          "end_ts": "2026-06-30T13:10:07.950426+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "teams"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-D-3",
+          "seq": 3
+        }
+      ]
+    },
+    {
+      "code": "E",
+      "family_name": "入社照合・手当確認",
+      "domain": "hr",
+      "executions": [
+        {
+          "code": "E",
+          "variant": null,
+          "case_id": "OB-181750-001",
+          "start_ts": "2026-06-30T13:04:31.962158+00:00",
+          "end_ts": "2026-06-30T13:05:00.428951+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-E-1",
+          "seq": 1
+        },
+        {
+          "code": "E",
+          "variant": null,
+          "case_id": "OB-181750-002",
+          "start_ts": "2026-06-30T13:10:07.950426+00:00",
+          "end_ts": null,
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-E-2",
+          "seq": 2
+        },
+        {
+          "code": "E",
+          "variant": null,
+          "case_id": "OB-181750-003",
+          "start_ts": "2026-06-30T13:10:36.134532+00:00",
+          "end_ts": "2026-06-30T13:11:14.178454+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-E-3",
+          "seq": 3
+        }
+      ]
+    },
+    {
+      "code": "F",
+      "family_name": "請求書承認",
+      "domain": "finance",
+      "executions": [
+        {
+          "code": "F",
+          "variant": "std",
+          "case_id": "INV-181750-001",
+          "start_ts": "2026-06-30T12:51:00.763588+00:00",
+          "end_ts": "2026-06-30T12:51:26.235750+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-F-1",
+          "seq": 1
+        },
+        {
+          "code": "F",
+          "variant": "std",
+          "case_id": "INV-181750-002",
+          "start_ts": "2026-06-30T12:57:06.251582+00:00",
+          "end_ts": "2026-06-30T12:57:36.500900+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-F-2",
+          "seq": 2
+        },
+        {
+          "code": "F",
+          "variant": "std",
+          "case_id": "INV-181750-003",
+          "start_ts": "2026-06-30T13:00:35.677911+00:00",
+          "end_ts": "2026-06-30T13:01:02.003236+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-F-3",
+          "seq": 3
+        },
+        {
+          "code": "F",
+          "variant": "exc",
+          "case_id": "INV-181750-004",
+          "start_ts": "2026-06-30T13:07:15.667039+00:00",
+          "end_ts": "2026-06-30T13:07:39.697559+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-F-4",
+          "seq": 4
+        }
+      ]
+    },
+    {
+      "code": "G",
+      "family_name": "経費精算承認",
+      "domain": "finance",
+      "executions": [
+        {
+          "code": "G",
+          "variant": "reg",
+          "case_id": "EXP-181750-001",
+          "start_ts": "2026-06-30T12:53:36.360765+00:00",
+          "end_ts": null,
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-G-1",
+          "seq": 1
+        },
+        {
+          "code": "G",
+          "variant": "reg",
+          "case_id": "EXP-181750-002",
+          "start_ts": "2026-06-30T12:54:00.352665+00:00",
+          "end_ts": null,
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-G-2",
+          "seq": 2
+        },
+        {
+          "code": "G",
+          "variant": "reg",
+          "case_id": "EXP-181750-003",
+          "start_ts": "2026-06-30T12:54:23.490214+00:00",
+          "end_ts": "2026-06-30T12:54:46.769224+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-G-3",
+          "seq": 3
+        }
+      ]
+    },
+    {
+      "code": "I",
+      "family_name": "予算差異分析",
+      "domain": "finance",
+      "executions": [
+        {
+          "code": "I",
+          "variant": null,
+          "case_id": "BV-181750-001",
+          "start_ts": "2026-06-30T12:55:12.503326+00:00",
+          "end_ts": "2026-06-30T12:56:37.984807+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "teams"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-I-1",
+          "seq": 1
+        },
+        {
+          "code": "I",
+          "variant": null,
+          "case_id": "BV-181750-002",
+          "start_ts": "2026-06-30T12:58:29.459235+00:00",
+          "end_ts": "2026-06-30T12:59:29.547686+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "teams"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-I-2",
+          "seq": 2
+        },
+        {
+          "code": "I",
+          "variant": null,
+          "case_id": "BV-181750-003",
+          "start_ts": "2026-06-30T13:01:27.658080+00:00",
+          "end_ts": "2026-06-30T13:02:42.184502+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "teams"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-I-3",
+          "seq": 3
+        }
+      ]
+    },
+    {
+      "code": "K",
+      "family_name": "受注処理",
+      "domain": "ops",
+      "executions": [
+        {
+          "code": "K",
+          "variant": "std",
+          "case_id": "ORD-181750-001",
+          "start_ts": "2026-06-30T12:49:59.457850+00:00",
+          "end_ts": "2026-06-30T12:51:00.762014+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": true,
+          "continues_to_next": true,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-K-1",
+          "seq": 1,
+          "long_running": true
+        },
+        {
+          "code": "K",
+          "variant": "std",
+          "case_id": "ORD-181750-002",
+          "start_ts": "2026-06-30T12:52:07.674203+00:00",
+          "end_ts": "2026-06-30T12:52:34.698697+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-K-2",
+          "seq": 2
+        },
+        {
+          "code": "K",
+          "variant": "std",
+          "case_id": "ORD-181750-003",
+          "start_ts": "2026-06-30T13:02:42.188884+00:00",
+          "end_ts": "2026-06-30T13:04:02.382708+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": "M1-K-split-1",
+          "phase": 2,
+          "exec_id": "M1-K-3",
+          "seq": 3
+        }
+      ]
+    },
+    {
+      "code": "L",
+      "family_name": "在庫調整",
+      "domain": "ops",
+      "executions": [
+        {
+          "code": "L",
+          "variant": "reg",
+          "case_id": "STK-181750-001",
+          "start_ts": "2026-06-30T12:53:14.540471+00:00",
+          "end_ts": "2026-06-30T12:53:36.360765+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-L-1",
+          "seq": 1
+        },
+        {
+          "code": "L",
+          "variant": "reg",
+          "case_id": "STK-181750-002",
+          "start_ts": "2026-06-30T12:54:46.769754+00:00",
+          "end_ts": "2026-06-30T12:55:12.501775+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-L-2",
+          "seq": 2
+        },
+        {
+          "code": "L",
+          "variant": "reg",
+          "case_id": "STK-181750-003",
+          "start_ts": "2026-06-30T12:58:05.920400+00:00",
+          "end_ts": "2026-06-30T12:58:29.457646+00:00",
+          "apps": [
+            "chrome",
+            "excel",
+            "notepad"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-L-3",
+          "seq": 3
+        }
+      ]
+    },
+    {
+      "code": "M",
+      "family_name": "仕入先連絡",
+      "domain": "ops",
+      "executions": [
+        {
+          "code": "M",
+          "variant": null,
+          "case_id": "SUP-181750-001",
+          "start_ts": "2026-06-30T12:49:20.542539+00:00",
+          "end_ts": "2026-06-30T12:49:59.457850+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "onenote"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-M-1",
+          "seq": 1
+        },
+        {
+          "code": "M",
+          "variant": null,
+          "case_id": "SUP-181750-002",
+          "start_ts": "2026-06-30T13:00:02.755949+00:00",
+          "end_ts": "2026-06-30T13:00:35.677911+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "onenote"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-M-2",
+          "seq": 2
+        },
+        {
+          "code": "M",
+          "variant": null,
+          "case_id": "SUP-181750-003",
+          "start_ts": "2026-06-30T13:05:00.429287+00:00",
+          "end_ts": "2026-06-30T13:05:34.603917+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "onenote"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-M-3",
+          "seq": 3
+        },
+        {
+          "code": "M",
+          "variant": null,
+          "case_id": "SUP-181750-004",
+          "start_ts": "2026-06-30T13:05:59.044743+00:00",
+          "end_ts": "2026-06-30T13:06:36.467639+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "onenote"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-M-4",
+          "seq": 4
+        }
+      ]
+    },
+    {
+      "code": "N",
+      "family_name": "出荷追跡",
+      "domain": "ops",
+      "executions": [
+        {
+          "code": "N",
+          "variant": null,
+          "case_id": "SHP-181750-001",
+          "start_ts": "2026-06-30T12:51:26.236396+00:00",
+          "end_ts": "2026-06-30T12:52:07.674203+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "teams"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-N-1",
+          "seq": 1
+        },
+        {
+          "code": "N",
+          "variant": null,
+          "case_id": "SHP-181750-002",
+          "start_ts": "2026-06-30T12:59:29.548712+00:00",
+          "end_ts": "2026-06-30T13:00:02.755949+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "teams"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-N-2",
+          "seq": 2
+        },
+        {
+          "code": "N",
+          "variant": null,
+          "case_id": "SHP-181750-003",
+          "start_ts": "2026-06-30T13:07:39.698197+00:00",
+          "end_ts": "2026-06-30T13:08:53.134774+00:00",
+          "apps": [
+            "chrome",
+            "notepad",
+            "teams"
+          ],
+          "continues_from_prev": false,
+          "continues_to_next": false,
+          "split_id": null,
+          "phase": 1,
+          "exec_id": "M1-N-3",
+          "seq": 3
+        }
+      ]
+    }
+  ],
+  "split_processes": {
+    "K": {
+      "split_id": "M1-K-split-1",
+      "phase1_task_ids": [
+        "ORD-181750-001",
+        "ORD-181750-002"
+      ],
+      "phase2_task_ids": [
+        "ORD-181750-003"
+      ],
+      "gap_task_count_actual": 0
+    }
+  },
+  "noise_blocks": [
+    {
+      "ts": "2026-06-30T13:08:19.424136+00:00",
+      "type": "auth_file_shell"
+    }
+  ],
+  "expected_boundaries": [
+    {
+      "ts": "2026-06-30T12:49:20.542539+00:00",
+      "type": "process_started",
+      "code": "M"
+    },
+    {
+      "ts": "2026-06-30T12:49:59.457850+00:00",
+      "type": "process_switched_out",
+      "code": "M"
+    },
+    {
+      "ts": "2026-06-30T12:49:59.457850+00:00",
+      "type": "process_started",
+      "code": "K"
+    },
+    {
+      "ts": "2026-06-30T12:51:00.762014+00:00",
+      "type": "process_switched_out",
+      "code": "K"
+    },
+    {
+      "ts": "2026-06-30T12:51:00.763588+00:00",
+      "type": "process_started",
+      "code": "F"
+    },
+    {
+      "ts": "2026-06-30T12:51:26.235750+00:00",
+      "type": "process_switched_out",
+      "code": "F"
+    },
+    {
+      "ts": "2026-06-30T12:51:26.236396+00:00",
+      "type": "process_started",
+      "code": "N"
+    },
+    {
+      "ts": "2026-06-30T12:52:07.674203+00:00",
+      "type": "process_switched_out",
+      "code": "N"
+    },
+    {
+      "ts": "2026-06-30T12:52:07.674203+00:00",
+      "type": "process_started",
+      "code": "K"
+    },
+    {
+      "ts": "2026-06-30T12:52:34.698697+00:00",
+      "type": "process_suspended",
+      "code": "K"
+    },
+    {
+      "ts": "2026-06-30T12:53:14.540471+00:00",
+      "type": "process_started",
+      "code": "L"
+    },
+    {
+      "ts": "2026-06-30T12:53:36.360765+00:00",
+      "type": "process_switched_out",
+      "code": "L"
+    },
+    {
+      "ts": "2026-06-30T12:53:36.360765+00:00",
+      "type": "process_started",
+      "code": "G"
+    },
+    {
+      "ts": "2026-06-30T12:54:00.352665+00:00",
+      "type": "process_started",
+      "code": "G"
+    },
+    {
+      "ts": "2026-06-30T12:54:23.490214+00:00",
+      "type": "process_started",
+      "code": "G"
+    },
+    {
+      "ts": "2026-06-30T12:54:46.769224+00:00",
+      "type": "process_switched_out",
+      "code": "G"
+    },
+    {
+      "ts": "2026-06-30T12:54:46.769754+00:00",
+      "type": "process_started",
+      "code": "L"
+    },
+    {
+      "ts": "2026-06-30T12:55:12.501775+00:00",
+      "type": "process_switched_out",
+      "code": "L"
+    },
+    {
+      "ts": "2026-06-30T12:55:12.503326+00:00",
+      "type": "process_started",
+      "code": "I"
+    },
+    {
+      "ts": "2026-06-30T12:56:37.984807+00:00",
+      "type": "process_switched_out",
+      "code": "I"
+    },
+    {
+      "ts": "2026-06-30T12:56:37.985328+00:00",
+      "type": "process_started",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T12:57:06.250845+00:00",
+      "type": "process_switched_out",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T12:57:06.251582+00:00",
+      "type": "process_started",
+      "code": "F"
+    },
+    {
+      "ts": "2026-06-30T12:57:36.500900+00:00",
+      "type": "process_switched_out",
+      "code": "F"
+    },
+    {
+      "ts": "2026-06-30T12:57:36.502358+00:00",
+      "type": "process_started",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T12:58:05.919716+00:00",
+      "type": "process_switched_out",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T12:58:05.920400+00:00",
+      "type": "process_started",
+      "code": "L"
+    },
+    {
+      "ts": "2026-06-30T12:58:29.457646+00:00",
+      "type": "process_switched_out",
+      "code": "L"
+    },
+    {
+      "ts": "2026-06-30T12:58:29.459235+00:00",
+      "type": "process_started",
+      "code": "I"
+    },
+    {
+      "ts": "2026-06-30T12:59:29.547686+00:00",
+      "type": "process_switched_out",
+      "code": "I"
+    },
+    {
+      "ts": "2026-06-30T12:59:29.548712+00:00",
+      "type": "process_started",
+      "code": "N"
+    },
+    {
+      "ts": "2026-06-30T13:00:02.755949+00:00",
+      "type": "process_switched_out",
+      "code": "N"
+    },
+    {
+      "ts": "2026-06-30T13:00:02.755949+00:00",
+      "type": "process_started",
+      "code": "M"
+    },
+    {
+      "ts": "2026-06-30T13:00:35.677911+00:00",
+      "type": "process_switched_out",
+      "code": "M"
+    },
+    {
+      "ts": "2026-06-30T13:00:35.677911+00:00",
+      "type": "process_started",
+      "code": "F"
+    },
+    {
+      "ts": "2026-06-30T13:01:02.003236+00:00",
+      "type": "process_switched_out",
+      "code": "F"
+    },
+    {
+      "ts": "2026-06-30T13:01:02.003766+00:00",
+      "type": "process_started",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T13:01:27.658080+00:00",
+      "type": "process_switched_out",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T13:01:27.658080+00:00",
+      "type": "process_started",
+      "code": "I"
+    },
+    {
+      "ts": "2026-06-30T13:02:42.184502+00:00",
+      "type": "process_switched_out",
+      "code": "I"
+    },
+    {
+      "ts": "2026-06-30T13:02:42.188884+00:00",
+      "type": "process_resumed",
+      "code": "K"
+    },
+    {
+      "ts": "2026-06-30T13:04:02.382708+00:00",
+      "type": "process_switched_out",
+      "code": "K"
+    },
+    {
+      "ts": "2026-06-30T13:04:02.385933+00:00",
+      "type": "process_started",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T13:04:31.961222+00:00",
+      "type": "process_switched_out",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T13:04:31.962158+00:00",
+      "type": "process_started",
+      "code": "E"
+    },
+    {
+      "ts": "2026-06-30T13:05:00.428951+00:00",
+      "type": "process_switched_out",
+      "code": "E"
+    },
+    {
+      "ts": "2026-06-30T13:05:00.429287+00:00",
+      "type": "process_started",
+      "code": "M"
+    },
+    {
+      "ts": "2026-06-30T13:05:34.603917+00:00",
+      "type": "process_switched_out",
+      "code": "M"
+    },
+    {
+      "ts": "2026-06-30T13:05:34.605486+00:00",
+      "type": "process_started",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T13:05:59.044743+00:00",
+      "type": "process_switched_out",
+      "code": "A"
+    },
+    {
+      "ts": "2026-06-30T13:05:59.044743+00:00",
+      "type": "process_started",
+      "code": "M"
+    },
+    {
+      "ts": "2026-06-30T13:06:36.467639+00:00",
+      "type": "process_switched_out",
+      "code": "M"
+    },
+    {
+      "ts": "2026-06-30T13:06:36.467639+00:00",
+      "type": "process_started",
+      "code": "D"
+    },
+    {
+      "ts": "2026-06-30T13:07:15.665985+00:00",
+      "type": "process_switched_out",
+      "code": "D"
+    },
+    {
+      "ts": "2026-06-30T13:07:15.667039+00:00",
+      "type": "process_started",
+      "code": "F"
+    },
+    {
+      "ts": "2026-06-30T13:07:39.697559+00:00",
+      "type": "process_switched_out",
+      "code": "F"
+    },
+    {
+      "ts": "2026-06-30T13:07:39.698197+00:00",
+      "type": "process_started",
+      "code": "N"
+    },
+    {
+      "ts": "2026-06-30T13:08:53.134774+00:00",
+      "type": "process_switched_out",
+      "code": "N"
+    },
+    {
+      "ts": "2026-06-30T13:08:53.136423+00:00",
+      "type": "process_started",
+      "code": "D"
+    },
+    {
+      "ts": "2026-06-30T13:09:32.741170+00:00",
+      "type": "process_started",
+      "code": "D"
+    },
+    {
+      "ts": "2026-06-30T13:10:07.950426+00:00",
+      "type": "process_switched_out",
+      "code": "D"
+    },
+    {
+      "ts": "2026-06-30T13:10:07.950426+00:00",
+      "type": "process_started",
+      "code": "E"
+    },
+    {
+      "ts": "2026-06-30T13:10:36.134532+00:00",
+      "type": "process_started",
+      "code": "E"
+    }
+  ]
+}

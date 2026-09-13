@@ -1,0 +1,72 @@
+{
+  "manifest_version": "1.0.0",
+  "chunk_id": "chunk_20260701-0930-Marcos",
+  "session_id": "ses_20260701-093900-Marcos",
+  "firebase_uid": "UyaWGqzH35RqLSPlmfc36bjKr1p1",
+  "machine_id": "Marcos",
+  "time_range": {
+    "start_ms": 1782898740252,
+    "start_iso": "2026-07-01T09:39:00.252Z",
+    "end_ms": 1782899929353,
+    "end_iso": "2026-07-01T09:58:49.353Z"
+  },
+  "schema_version": "1.0.0",
+  "agent_version": "1.2.0",
+  "statistics": {
+    "total_events": 2229,
+    "events_by_layer": {
+      "L1": 488,
+      "L2": 1596,
+      "L3": 138,
+      "SYSTEM": 7
+    },
+    "events_by_type": {
+      "app_switch": 645,
+      "browser_alert": 1,
+      "browser_click": 84,
+      "browser_form_input": 28,
+      "browser_navigation": 24,
+      "browser_tab_event": 1,
+      "clipboard_change": 49,
+      "extension_connected": 1,
+      "extension_disconnected": 4,
+      "keystroke": 554,
+      "mouse_click": 86,
+      "mouse_scroll": 41,
+      "screenshot_smart": 488,
+      "session_end": 1,
+      "session_start": 1,
+      "shortcut": 214,
+      "window_state_change": 2,
+      "window_title_change": 5
+    },
+    "sequence_number_range": {
+      "first": 0,
+      "last": 2228
+    }
+  },
+  "files": {
+    "event_log": {
+      "filename": "events.jsonl",
+      "size_bytes": 10657241,
+      "line_count": 2229,
+      "format": "jsonl"
+    },
+    "screenshots": {
+      "directory": "screenshots/",
+      "file_count": 488,
+      "total_size_bytes": 107093447,
+      "format": "jpeg"
+    }
+  },
+  "integrity": {
+    "event_log_sha256": "566be0ce875bbb80625c30df9d099fd02becfdc0bbe73c7302aa6f855d1343d8",
+    "manifest_created_at_ms": 1782899929448
+  },
+  "previous_chunk_id": null,
+  "next_chunk_id": null,
+  "is_session_start": true,
+  "is_session_end": false,
+  "session_info": null,
+  "gaps": []
+}
