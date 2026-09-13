@@ -1,0 +1,18 @@
+# Screenshots are huge (~13GB total) and not something we want to version.
+# We keep and read the events.jsonl / manifest.json / gt.jsonl files, just not the images.
+dataset_a/*/*/screenshots/
+dataset_b/*/*/screenshots/
+
+# Python stuff
+venv/
+__pycache__/
+*.pyc
+
+# Our own scratch/output files that don't need to be tracked yet
+outputs/
+
+# Raw hand-traced example notes — superseded by WORK_LOG.md, kept locally
+# as scratch but not worth versioning.
+notes/day1_example_walkthrough.md
+notes/day1_example_2_interruption.md
+notes/day1_example_3_datasetB.md
