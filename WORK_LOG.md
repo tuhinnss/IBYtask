@@ -62,4 +62,34 @@ But still, only **64.3%** of boundaries were associated with an app switch event
 Also analyzed gaps between events and concluded that all negative gaps occurred during `screenshot_smart` events, which means that it is some specific behavior of timestamps, and not some data quality problem.
 **Conclusion:** app switching **burst/density** is a significant signal of boundaries, but should not be seen as a one-switch signal.
 
+### App Transition Analysis
+
+Built `explore_app_transitions.py` to check whether the *specific* app-to-app transition (not just "a switch happened") carries a boundary signal. Found something I didn't expect first: **88.3% of all app_switch events are Chrome→Chrome** (same app both sides) — almost certainly multi-window focus noise inside Chrome, not real navigation. Once I looked past that, real transitions split cleanly into two groups: `Excel→Chrome` (n=248) is **83.5%** boundary-associated — a strong "new task starting" tell — while `Word/Teams/PowerPoint→Chrome` are **0–27%** boundary-associated, i.e. almost always mid-task check-ins that return to the same work, not a new task.
+**Conclusion:** not all switches are equal — some transition types should push toward a boundary guess, others should suppress one.
+
+### Same-Process Restart Analysis
+
+Followed up on Day 1's finding of 230 "quiet" restarts (same process code repeating with no `process_switched_out`/`process_suspended` marker). Ran the Step 2 boundary-neighborhood check on just these 230 and the result is stark: **median app_switch_count = 2**, matching Step 2's *non-boundary control* exactly, and only **9.1%** have an app_switch within 3s (vs 72.9% for normal boundaries). These 12.6% of all boundaries are essentially invisible to the app-switch signal — the telemetry genuinely looks like uninterrupted work.
+**Conclusion:** this is likely the hardest sub-problem for the segmenter; app-switch-based detection alone won't catch these.
+
+### Interruption/Resumption Analysis
+
+Paired `process_suspended`/`process_resumed` via `split_id` (190 pairs) and checked the boundary signal at the **resume** point specifically — worried it might be another blind spot like the restarts above. It isn't: resume points show **65.8%** app-switch-within-3s and a median app_switch_count of **26.5**, statistically the same as ordinary boundaries. Away-time is almost always long (median **363s / ~6 min**, 99% over 60s) — a real context switch, not a quick glance. This also let me correct two guesses from earlier: the Step 2 control-point 22s-gap outlier isn't explained by these (structurally can't be, since a suspend/resume splits into two separate ground-truth executions), and the Word/Teams/PowerPoint anti-boundary pattern above is a *different*, shorter phenomenon than formal interruptions, not the same mechanism.
+**Conclusion:** interruption/resumption doesn't need special-case detection handling — the existing signal already covers it.
+
+### Case/Context Signal Analysis
+
+Checked whether actual on-screen/clipboard *content* (not just behavior) could label the families app identity can't tell apart. Raw `clipboard_change.text_content` is a dead end — **0% of 5,198 events** across all of dataset_a have any actual text, only length. But `context.extracted_text` (screen OCR) is a real, near-universal signal: present in **97.7%** of executions, and — checked against what `gt.jsonl` says was actually copied — it captures that same content **70.5%** of the time.
+**Conclusion:** clipboard content is unusable, but OCR text is the most promising untested lead for solving the 10-ambiguous-family labeling problem.
+
+### Window-Title Analysis
+
+Tested Day 2's one-off "Notepad titles hurt purity" finding properly — across all four office apps, at several normalization levels, using the same purity math as the segmenter evaluator. Raw title and first-word both land within noise of the naive app-name baseline (~24% purity). Stripping everything after the first digit gets purity up to **39.3%** but coverage collapses to **32%** — a real but narrow improvement, still below what OCR (Step 6) or the actual working segmenter already achieve.
+**Conclusion:** window titles are a closed question now, not just an assumption — not worth further investment.
+
+### Event-Type / Activity-Pattern Analysis
+
+Checked whether the *timing* of event types within an execution (not totals, already covered on Day 1) fingerprints a family — e.g. does keystroke activity cluster early or late. Mostly negative: per-family deviations from the overall timing baseline are small (mostly <0.15 on a 0–1 scale) and noisy. One nice cross-check: `app_switch` events cluster earliest overall (centroid 0.36 vs ~0.5–0.6 for everything else), which lines up with the boundary-neighborhood finding above. 予算差異分析 (budget variance) stood out again as later-loaded across several event types — but it's the same family Day 1 already flagged as easy (PowerPoint), not a new lead.
+**Conclusion:** activity rhythm doesn't add a new labeling signal — closes another avenue, same as window titles.
+
 
