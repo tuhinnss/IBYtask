@@ -52,3 +52,14 @@ I checked whether each process family has a clear pattern in its raw events. I a
 The main finding was that **apps and app order alone aren't enough to identify the process**. Most processes use the same few apps, mainly Chrome, Excel, and Notepad. The numerical features show some consistency, but they're better as supporting signals rather than the main classifier.
 So the more useful information is probably **what is happening inside the apps**, like the Chrome URL, clipboard content, or notes/documents.
 Next, I'll check all Chrome URLs instead of only the top 25, to see if the other process families have less frequent but more specific URL patterns.
+
+Day 2:
+### Boundary Neighborhood Analysis
+
+Developed `explore_boundary_neighborhoods.py` to analyze raw event activity in the proximity of **1,752 real process boundaries** and mid-task control points.
+Main finding – the density of **app switching events is much higher near boundaries** – median **26 app switches vs 2** in a window of ±10s. Also, the closest app switch occurred much closer to a real boundary – **206ms vs 3.7s**.
+But still, only **64.3%** of boundaries were associated with an app switch event within 3 seconds, which means that the use of just one switch close enough to the boundary point can miss too many cases. However, the signal is present in all 15 process families, ranging from 51% to 71%.
+Also analyzed gaps between events and concluded that all negative gaps occurred during `screenshot_smart` events, which means that it is some specific behavior of timestamps, and not some data quality problem.
+**Conclusion:** app switching **burst/density** is a significant signal of boundaries, but should not be seen as a one-switch signal.
+
+
