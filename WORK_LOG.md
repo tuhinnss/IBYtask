@@ -1,108 +1,55 @@
 # Work Log
 
-## Day 1 — reading the brief, checking  the dataset, trying to find insights.
+## Day 1 — reading the brief, poking at the data
 
-I read README.md / DATA_SCHEMA.md, then walked `events.jsonl` next to `gt.jsonl` for one session by eye, I found the following:
+Read README.md / DATA_SCHEMA.md, then walked one session's events.jsonl next to gt.jsonl by eye. Noticed app-switch bursts sit right on real boundaries, and that dataset_b's Word document filenames are basically a free label — dataset_a has nothing that clean.
 
-- A burst of app-switching tends to sit right on a real process boundary.
-- Work gets interrupted and resumed under a *new* case_id — even the
-  ground truth doesn't cleanly track that as "the same case," so I don't need to either. Two segments, same label, done.
-- In dataset_b the Word document filename being edited is basically a free process label. Dataset_a has no such luxury.
+Wrote 4 quick scripts to check this at scale instead of trusting 3 examples:
+- app_switch is 31% of dataset_a's events but only 8% of dataset_b's — didn't fully explain the gap, just noted it.
+- Gaps over 20s are rare (<0.3% of all gaps), so "long pause = new task" barely fires on its own. Also every negative timestamp gap (down to -713,900ms) turned out to be a `screenshot_smart` event — screenshots log out of order, not a real data bug.
+- Ground truth: 2,009 executions, 15 processes, mostly 24-40s each. 230 times a process restarts for a new case with **no** switch marker at all — so the segmenter can't always expect an explicit "I left this task" signal.
+- Dataset_b has 13 real Word document names once you strip the "Compatibility Mode" title noise — a much better label source than anything dataset_a offers.
 
+Then checked whether app identity alone (which apps, in what order) can tell processes apart — it can't. 12 of 15 families in dataset_a share the same dominant app set (Chrome+Excel+Notepad). Event/keystroke counts help a little but aren't enough alone. Need what's actually *on screen*, not just which app is open.
 
-Turned the throwaway checks into small scripts under `src/` (share a tiny `src/log_utils.py` for walking session/chunk folders) so these numbers are reproducible, not just asserted. Run any of them from the repo root.
+## Day 2 — full EDA before writing any segmenter code
 
-**[`explore_event_stats.py`](src/explore_event_stats.py)** ran this to get an idea of how the both dataset look like 
-dataset_a:
-63 sessions / 162,768 events, "app_switch" alone is 31% of everything.
-dataset_b: 15 sessions / 20,477 events, "app_switch" is only 8%.
-Bigger gap than expected — not sure yet if that's a real behavioral
-difference or an artifact of A being denser test data.
-I got an idea of which were the highest number of events, and the difference betwn both the datasets. 
+Went through every signal I could think of, always checked against dataset_a's 1,752 real boundaries plus a mid-task control group, so I wasn't fooling myself.
 
-**[`explore_gaps.py`](src/explore_gaps.py)** — 
-I tried finding out gaps which were worth investing into. Found the following in the process:
-gap percentiles:
-`p95 ≈ 2s, p99 ≈ 5s` in both datasets; only ~0.25% (A) / 0.03% (B) of gaps exceed 20s. So "long gap = stepped away" is a fine rule but it'll fire *rarely* — app-switch-pattern is doing most of the segmenting work, gap is just a tie-breaker.
+**Worked:** app-switch density near a boundary is huge (26 switches in ±10s vs 2 mid-task, nearest switch ~200ms from the true boundary, present across all 15 families). Not all switches are equal either — Excel→Chrome is 83% boundary-associated, Word/Teams/PowerPoint→Chrome is 0-27% (a glance-and-return, not a new task). Interruption/resumption turned out fine on its own — resuming shows the same strong signal as any other boundary.
 
-There is a strange thing I found out:  minimum gap is **negative** (down to
--713,900ms). I checked every event with a gap under -500ms (1,446 of
-them) — **100% are `screenshot_smart`**, zero exceptions. Screenshots get logged async and land out of timestamp order even though sequence/array order says otherwise.
+**Didn't work:** window titles as a label (tried all 4 office apps, several normalizations — never beat the naive "which app" baseline). Event timing/rhythm within a task — no real per-family pattern. Also found 88% of all app_switch events are Chrome→Chrome window-focus noise, not real navigation, which had been inflating my early density numbers.
 
-**[`explore_ground_truth.py`](src/explore_ground_truth.py)** — 
-I studied the ground truth. These were my findings after aggregating all 63 sessions of A: 2,009 executions, 15 process families, near-even finance/hr/ops split. Median durations mostly 24–40s (one outlier, budget variance analysis, at 74s). A few processes have long max-duration tails (vendor contact: median 39s, max 1,145s) — likely the interrupt/resume pattern from Day 1. Only 5/15 families have more than one `variant` (std/exc, reg/adj).
+**The real blind spot:** "quiet restarts" — same process starting again back-to-back with zero switch marker (230 cases, 13% of boundaries). These look statistically identical to mid-task control points. No app-switch signal will ever catch them.
 
-Also chased the schema's "duplicate `process_started`" warning: literal back-to-back duplicates = 0. What actually happens (230 times) is the *same* process code restarting for a new case with **no** switch/suspend marker in between — the next `process_started` line just *is* the boundary. So the segmenter can't always expect an explicit "left this task" signal.
+**The real find:** clipboard content is never actually logged (checked 5,198 events, 0% have text — dead end). But `extracted_text` (screen OCR) is present in 97.7% of executions and matches what was actually copied 70.5% of the time. That's the labeling signal, not app identity.
 
-**[`explore_dataset_b_labels.py`](src/explore_dataset_b_labels.py)** I found strong labeling signals in Dataset B: three backend systems visible through Edge (finance, HR/payroll, and order/inventory), along with 13 distinct Word document templates after normalizing the window titles. This gives me a much richer source of process-label information than Dataset A. One issue I found is that Word titles contain formatting noise: the same document appears in two different “Compatibility Mode” formats, while generic titles such as Word and Resume Reading don't provide useful labeling information. I therefore need to strip these before using document filenames as reliable labeling anchors.
+Wrote it all into `notes/segmentation_design.md`: boundaries and labels need two separate mechanisms, not one. Set targets (≥85% boundary hit, ≥60% label purity) before building, so I wouldn't just chase whatever number came out first.
 
-### Where this leaves me
-- Idle-gap cutoffs: minor signal, don't over-invest. I shouldn't heavily rely on them since they are very rare.
-- Screenshot gaps: Their timestamps can be out of order, so I should recompute inter-event gaps from event timestamps rather than trusting sequence order or the reported gap field.
-- App-switch-pattern / anchor-document detection carries most of the
-  weight — Day 1 hunch confirmed at scale.
-- Segmenter must open a new segment on "this pattern just restarted,"not only on "a different pattern appeared."
-- For B: normalize Word titles (strip compat-mode suffixes, drop
-  blank/"Resume Reading") before using filename as a label\
+## Day 3 — building it, breaking it, simplifying it
 
-Day1:Session 2: 
+Tested the one big assumption first: is OCR text actually family-distinguishing, not just present? Yes — 82% held-out accuracy across 15 families, and it went *up* after stripping case-ID tokens, so it's real vocabulary, not leakage. Also ran the full Chrome URL list instead of just the top 25 — every one of the 5 main routes is used by all 15 families, so URL route is dead as a label (I was wrong about this on Day 2).
 
-I checked whether each process family has a clear pattern in its raw events. I analyzed 1,752 executions across 15 families and compared the apps used, app order, and basic event statistics.
+Built a full pipeline: logistic regression for boundaries, k-means for labels. Found a real bug where my own labeling made "dense = not a boundary" (backwards) — fixing it took precision from 57% to 90%. Recall stuck at ~58% no matter what I tried, three different methods converged on the same ceiling — confirms the quiet-restart blind spot rather than being a tuning problem.
 
-The main finding was that **apps and app order alone aren't enough to identify the process**. Most processes use the same few apps, mainly Chrome, Excel, and Notepad. The numerical features show some consistency, but they're better as supporting signals rather than the main classifier.
-So the more useful information is probably **what is happening inside the apps**, like the Chrome URL, clipboard content, or notes/documents.
-Next, I'll check all Chrome URLs instead of only the top 25, to see if the other process families have less frequent but more specific URL patterns.
+First run on dataset_b: 16 segments for 15 sessions, should've been 150-300. Dataset_b's *busiest* moment is quieter than dataset_a's *typical* moment — a threshold tuned on one department doesn't transfer to another. Fixed by making density relative to each session's own baseline. Segments went 16 → 198.
 
-Day 2:
-### Boundary Neighborhood Analysis
+Then got told this was too complex to defend in an interview — fair — so rebuilt it as one plain file: boundaries = switching-rate spikes, labels = k-means over on-screen text named by whichever document was open. This broke twice more before it worked: a fixed multiplier didn't transfer between datasets either (same problem, different shape — fixed by ranking within each session instead), and a naming bug was splitting one real process into two labels whenever k-means happened to cluster it into two groups.
 
-Developed `explore_boundary_neighborhoods.py` to analyze raw event activity in the proximity of **1,752 real process boundaries** and mid-task control points.
-Main finding – the density of **app switching events is much higher near boundaries** – median **26 app switches vs 2** in a window of ±10s. Also, the closest app switch occurred much closer to a real boundary – **206ms vs 3.7s**.
-But still, only **64.3%** of boundaries were associated with an app switch event within 3 seconds, which means that the use of just one switch close enough to the boundary point can miss too many cases. However, the signal is present in all 15 process families, ranging from 51% to 71%.
-Also analyzed gaps between events and concluded that all negative gaps occurred during `screenshot_smart` events, which means that it is some specific behavior of timestamps, and not some data quality problem.
-**Conclusion:** app switching **burst/density** is a significant signal of boundaries, but should not be seen as a one-switch signal.
+**Final numbers on the file I'm actually shipping:** 191 segments across all 15 dataset_b sessions, 8 labels, all real document names, no duplicates. Boundary F1 ~61% held out.
 
-### App Transition Analysis
+Label purity is where I have to be honest about a correction, not just a result. I quoted 62% purity earlier today — that number was measured on cluster assignment before I fixed the naming bug above, and I never re-ran it after. Once I did: a document name is ground truth for what the group is (that's the fix), but on dataset_a one shared workbook (`m1_reference`) is open in 80% of everything, so trusting it as ground truth collapsed 15 processes into 1 label — purity fell to 9.6%. Fixed by only trusting a document as an anchor if it's under 40% of the dataset (a real per-process document never dominates like a shared file does — dataset_b's top doc is 19%, dataset_a's is 80%), which gets dataset_a back to 20.5% purity / 3 labels. Still below my ≥60% target, and below the 32% baseline on this one metric.
 
-Built `explore_app_transitions.py` to check whether the *specific* app-to-app transition (not just "a switch happened") carries a boundary signal. Found something I didn't expect first: **88.3% of all app_switch events are Chrome→Chrome** (same app both sides) — almost certainly multi-window focus noise inside Chrome, not real navigation. Once I looked past that, real transitions split cleanly into two groups: `Excel→Chrome` (n=248) is **83.5%** boundary-associated — a strong "new task starting" tell — while `Word/Teams/PowerPoint→Chrome` are **0–27%** boundary-associated, i.e. almost always mid-task check-ins that return to the same work, not a new task.
-**Conclusion:** not all switches are equal — some transition types should push toward a boundary guess, others should suppress one.
+That's the honest number for dataset_a. But dataset_a is a validation proxy — it never had good document anchors to begin with (one shared file, not 13 distinct ones), so this measures a dataset that lacks the signal the approach needs, not a flaw in the approach itself. The thing that matters is dataset_b, which does have real per-process documents, and its output is unaffected by any of this (same 191 segments, same 8 clean labels, before and after every fix above). Recall is the other number I'm not happy with — under-cutting means Step 2's duration figures will look a bit longer than reality, worth saying that plainly in the report too.
 
-### Same-Process Restart Analysis
+## Day 4 — cutting the labeling logic down further
 
-Followed up on Day 1's finding of 230 "quiet" restarts (same process code repeating with no `process_switched_out`/`process_suspended` marker). Ran the Step 2 boundary-neighborhood check on just these 230 and the result is stark: **median app_switch_count = 2**, matching Step 2's *non-boundary control* exactly, and only **9.1%** have an app_switch within 3s (vs 72.9% for normal boundaries). These 12.6% of all boundaries are essentially invisible to the app-switch signal — the telemetry genuinely looks like uninterrupted work.
-**Conclusion:** this is likely the hardest sub-problem for the segmenter; app-switch-based detection alone won't catch these.
+Got feedback that even the k-means labeling step was more than needed for a 7-day intern task — fair, since I could already see 87% of segments have their own document open directly, so grouping them by content similarity to guess a label was mostly unnecessary work dressed up as sophistication.
 
-### Interruption/Resumption Analysis
+Deleted it. New rule: label = the document open during that segment, or `other` if none. No vectors, no clustering, no random seed. Kept one safeguard (a document only counts if it's not a generic shared file open in >40% of the run — same dominance check as before, since that's still a real problem on dataset_a).
 
-Paired `process_suspended`/`process_resumed` via `split_id` (190 pairs) and checked the boundary signal at the **resume** point specifically — worried it might be another blind spot like the restarts above. It isn't: resume points show **65.8%** app-switch-within-3s and a median app_switch_count of **26.5**, statistically the same as ordinary boundaries. Away-time is almost always long (median **363s / ~6 min**, 99% over 60s) — a real context switch, not a quick glance. This also let me correct two guesses from earlier: the Step 2 control-point 22s-gap outlier isn't explained by these (structurally can't be, since a suspend/resume splits into two separate ground-truth executions), and the Word/Teams/PowerPoint anti-boundary pattern above is a *different*, shorter phenomenon than formal interruptions, not the same mechanism.
-**Conclusion:** interruption/resumption doesn't need special-case detection handling — the existing signal already covers it.
+Result on dataset_b: 191 segments, same as before, 167/191 (87%) get a real document label, 24 (13%) honestly say `other` instead of being forced into a guessed cluster. Looked at what those 24 actually are: some genuine portal-only work (no document needed), some test-environment noise (terminal commands, setup screens), a few short ambiguous glances at Teams/settings. Better to flag these for a second look in Step 2 than silently mislabel them.
 
-### Case/Context Signal Analysis
+Boundary detection untouched — same numbers as before (82.7% precision / 50.0% recall / 62.3% F1 on dataset_a, held out).
 
-Checked whether actual on-screen/clipboard *content* (not just behavior) could label the families app identity can't tell apart. Raw `clipboard_change.text_content` is a dead end — **0% of 5,198 events** across all of dataset_a have any actual text, only length. But `context.extracted_text` (screen OCR) is a real, near-universal signal: present in **97.7%** of executions, and — checked against what `gt.jsonl` says was actually copied — it captures that same content **70.5%** of the time.
-**Conclusion:** clipboard content is unusable, but OCR text is the most promising untested lead for solving the 10-ambiguous-family labeling problem.
-
-### Window-Title Analysis
-
-Tested Day 2's one-off "Notepad titles hurt purity" finding properly — across all four office apps, at several normalization levels, using the same purity math as the segmenter evaluator. Raw title and first-word both land within noise of the naive app-name baseline (~24% purity). Stripping everything after the first digit gets purity up to **39.3%** but coverage collapses to **32%** — a real but narrow improvement, still below what OCR (Step 6) or the actual working segmenter already achieve.
-**Conclusion:** window titles are a closed question now, not just an assumption — not worth further investment.
-
-### Event-Type / Activity-Pattern Analysis
-
-Checked whether the *timing* of event types within an execution (not totals, already covered on Day 1) fingerprints a family — e.g. does keystroke activity cluster early or late. Mostly negative: per-family deviations from the overall timing baseline are small (mostly <0.15 on a 0–1 scale) and noisy. One nice cross-check: `app_switch` events cluster earliest overall (centroid 0.36 vs ~0.5–0.6 for everything else), which lines up with the boundary-neighborhood finding above. 予算差異分析 (budget variance) stood out again as later-loaded across several event types — but it's the same family Day 1 already flagged as easy (PowerPoint), not a new lead.
-**Conclusion:** activity rhythm doesn't add a new labeling signal — closes another avenue, same as window titles.
-
-### Hard-Case Analysis
-
-Built `explore_hard_cases.py` to fold every weak spot found so far into one difficulty score per execution – quiet restart, duration outlier, ambiguous app-set, missing OCR.
-Main finding – the difficulty here is broad but shallow. **74.4%** of executions have an app-set shared by 5+ families, but only **13.2%** carry two or more problems at once, and **zero out of 1,589** carry all four. Even the worst cases leave me at least one usable signal. 予算差異分析 is confirmed the easiest family (mean score **0.17**), 経費精算承認 the hardest (**1.23**).
-**Conclusion:** I don't need to solve one impossible worst case – I need a strong default for the ambiguous majority plus cheap fallbacks for the rare problems, since they almost never stack.
-
-### Segmentation Design
-
-Wrote the last two days up into `notes/segmentation_design.md` – the spec I'll build against tomorrow, not code yet.
-The main decision – **boundary detection and labeling have to be two separate stages**. That is exactly what my earlier rough segmenter got wrong: one "signature change" mechanism doing both jobs, which is why it hit 93.4% on boundaries but only **31.8%** on labels. App identity is a strong boundary signal and a useless label signal, so the two can't share a mechanism. Boundaries get the behavioural signals (transition density, weighted by transition type, snapped to the nearest real transition); labels get the content ones (document anchor first, then OCR).
-I also fixed the bar now instead of chasing it later – **≥85%** boundary hit rate (quiet restarts cap it near 87% anyway) and **≥60%** label purity, up from 31.8%.
-**Conclusion:** the whole design leans on OCR text being family-distinguishing, which Step 6 never actually proved – so Day 3 starts with a one-hour check of that assumption before I build anything on top of it.
-
-
+**Conclusion:** the whole segmenter is now two rules, both explainable without naming an algorithm: boundaries = switching-rate spikes relative to the session's own pace, labels = the document that was open, or an honest "other." That's the final version — moving to Step 2 next.

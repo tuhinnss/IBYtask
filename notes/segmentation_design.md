@@ -43,9 +43,9 @@ What the nine steps actually established:
 | Transition *type* (from→to) | **Strong**, directional | Excel→Chrome 83.5% vs Word/Teams/PPT→Chrome 0–27% (Step 3) |
 | Same-app "switches" | **Noise-heavy**, weak | 88.3% of all app_switch events are Chrome→Chrome (Step 3) |
 | Idle gaps | **Weak**, high precision when it fires | >20s = 0.25% of gaps (Session 1) |
-| Screen OCR (`extracted_text`) | **Most promising** for labels, untested | 97.7% coverage, 70.5% content accuracy (Step 6) |
+| Screen OCR (`extracted_text`) | **Validated — strongest label signal** | 82.1% held-out family accuracy vs 6.7% random (Day 3) |
 | Document/file anchors | **Strong** for labels in dataset_b | 13 distinct procedures (Day 1) |
-| Browser URL route | **Partial** — 5/15 families in A; generic in B | Day 1, Day 2 |
+| Browser URL route | **Dead in A** — all 5 main routes used by all 15 families; generic in B | Day 3 |
 | App-set / app-sequence | **Weak** for labels | 12/15 families share a set; 21–50% seq match (Step 1) |
 | Window titles | **Dead end** | 24% purity, no better than app-name baseline (Step 7) |
 | Clipboard content | **Dead end** — never populated | 0 of 5,198 events (Step 6) |
@@ -146,9 +146,13 @@ Per-segment, pick the label anchor in this order:
    Reading` / blank). Strongest available signal in dataset_b: 13
    distinct real procedure names (Day 1).
 2. **OCR content signature** — see B2. The main new mechanism.
-3. **Browser URL route** — real but limited: covers 5/15 families in
-   dataset_a, and dataset_b reuses the *same generic* route strings
-   across unrelated departments, so it cannot stand alone there (Day 2).
+3. **Browser URL route** — **demoted to near-useless (Day 3).** The
+   full URL inventory shows all five main routes (`#/resident-tax`,
+   `#/leave-applications`, `#/payroll-items`, `#/onboarding`,
+   `#/social-insurance`) are visited by *all 15 families* — every family
+   touches every route, so the route carries no family information in
+   dataset_a. Day 2's "covers 5/15 families" reading was wrong. Keep only
+   as a weak co-occurrence feature, never as a primary anchor.
 4. **App-set** — tie-breaker only. One genuinely useful case exists:
    PowerPoint ⇒ budget-variance-analysis, the single family with a
    distinctive app footprint (Step 1, reconfirmed in Steps 8 and 9).
@@ -174,19 +178,93 @@ Proposed mechanism:
 This produces *consistent labels without ground truth*, which is exactly
 what dataset_b needs.
 
-### B3. ⚠ Untested dependency — test this FIRST on Day 3
-Step 6 proved OCR text is **usable** (present and accurate). It did
-**not** prove OCR text is **family-distinguishing** — that's the open
-item in `notes/open_ideas.md`.
+### B3. ✅ Dependency tested and cleared (Day 3)
+Step 6 proved OCR text is *usable*; it did not prove it is
+*family-distinguishing*. That was the single assumption the whole of
+Stage B rested on, so Day 3 tested it before building anything.
 
-**Day 3 must begin with a cheap check of that hypothesis** (per-family
-term overlap on dataset_a, where families are known) before any pipeline
-is built on it. If OCR vocabulary does not separate families, Stage B
-collapses back to the anchor hierarchy alone and expected label quality
-drops to roughly the old segmenter's level — worth knowing in hour one
-of Day 3, not on Day 5.
+`src/explore_ocr_labeling.py` builds a TF-IDF term profile per family
+from a 70% train split and classifies **held-out** executions by nearest
+profile:
 
----
+```
+held-out n=513, 15 families
+  random baseline        6.7%
+  majority-class         8.8%
+  all terms             80.7%
+  ID-like tokens removed 82.1%   <- signal is real vocabulary, not case-IDs
+```
+
+Two things make this convincing rather than just a nice number:
+
+1. **Stripping ID-like tokens made it BETTER, not worse.** If accuracy
+   had been carried by case-ID prefixes (`INV-`, `SHP-`, `EXP-`), it
+   would have collapsed — those are dataset_a-specific and wouldn't
+   transfer. It rose instead, so the signal is genuine process
+   vocabulary, which is exactly the kind of thing that *should* transfer
+   to dataset_b's different processes.
+2. It is ~9x the random baseline on held-out data, not training data.
+
+**Important caveat — do not over-read this number.** It measures
+classification given *perfect* ground-truth segment windows and *known*
+family labels. The real pipeline has neither:
+- Stage A supplies imperfect windows, so real label quality will be lower.
+- dataset_b has no labels at all, so the production mechanism must be
+  **clustering**, not classification.
+
+What the experiment establishes is that the classes *are separable in
+OCR space* — which is the precondition for clustering to work. Validate
+the clustering pipeline on dataset_a (cluster, then measure purity
+against known families, and use that to choose k) before running it on
+dataset_b.
+
+**Known weakness:** every top confusion predicts 出荷追跡 (shipment
+tracking) — its profile acts as an attractor, probably because its OCR
+content is the most diverse. Worth a profile-normalisation tweak if
+labeling quality stalls.
+
+### B2a. Clustering validated on dataset_a (Day 3)
+
+`src/segment_labels.py` clusters segments by OCR term vector (spherical
+k-means, tf-idf, ID tokens and non-work sites stripped) and scores the
+result against the 15 known families:
+
+```
+k     cohesion  purity   inverse purity
+12     0.5606    56.9%      72.0%      <- unsupervised elbow picks this
+15     0.5984    59.5%      70.7%      <- dataset_a's true k
+18     0.6290    66.8%      69.8%
+old segmenter baseline:     31.8%      50.8%
+```
+
+Purity nearly doubles against the baseline and inverse purity rises
+~20 points, so the design's >=60% target is essentially met at true k.
+
+**Choosing k without ground truth.** The elbow heuristic picks 12 where
+the truth is 15 — a consistent *under*-estimate, so dataset_b's k gets a
++3 correction. This is a calibration borrowed from one dataset to
+another and should be stated as an assumption in the report, not treated
+as established.
+
+**Anchors are dataset-specific, exactly as section 6 predicted:**
+
+| | office switches with an anchor | distinct | usable |
+|---|---|---|---|
+| dataset_a | 90% | 14, but dominated by one shared `m1_reference` workbook | no |
+| dataset_b | 61% | 14 genuine procedure names | yes |
+
+So dataset_a must lean on OCR clustering, while dataset_b can use
+document anchors to *name* clusters. Labels come from the cluster either
+way — the brief evaluates label consistency, not label text, and
+clustering is what delivers consistency.
+
+### B4. Filter non-work browsing
+The Day 3 URL inventory also surfaced obvious non-business browsing
+inside execution windows — YouTube, Jira, GitHub, AWS console, Slack,
+Claude.ai. This is the README's warned-about *"operations unrelated to
+any business process are mixed in."* Cheap win: treat these hosts as
+non-work and exclude them from both anchor extraction and OCR term
+vectors, so they can't pollute a cluster.
 
 ## 6. Dataset A vs B — what's shared, what's parameterized
 
@@ -209,6 +287,38 @@ code — dataset_b's apps were different than A's, and a third department
 would differ again.
 
 ---
+
+## 6a. Domain shift between A and B — the Day 3 failure
+
+The first end-to-end run produced **16 segments across 15 dataset_b
+sessions** — about one segment per 11-minute session, when 10-20 tasks
+per session is the realistic expectation. Stage A was firing almost no
+boundaries on B. The cause:
+
+```
+                  switches/min    local density (+/-5s window)
+dataset_a              33.5        median 25   max 35
+dataset_b               9.8        median  3   max 16
+```
+
+**Dataset_b's peak switch density sits below dataset_a's median.** A
+model trained on A learned "a boundary looks like density 25-35", a
+level B never reaches anywhere, so nothing crossed the threshold. This
+is precisely the brief's warning that an approach tuned on A "will not
+necessarily transfer to Dataset B", made concrete and measurable.
+
+**Fix:** every scale-sensitive feature is now expressed relative to the
+session's own baseline — local density divided by that session's median
+density, gaps divided by that session's median gap. The question becomes
+"is this an unusually busy moment *for this session*" rather than "does
+this exceed an absolute count learned elsewhere". Transition-type lift,
+app-set change and the is-real flag were already scale-free.
+
+**Consequence for the report:** any threshold tuned on one department's
+data is a liability when deployed to another. That is a deployment risk
+worth stating explicitly in the Step 3 write-up, not just a modelling
+detail — the same trap would hit an automation tool rolled out from one
+department to the next.
 
 ## 7. What "good enough" means
 
