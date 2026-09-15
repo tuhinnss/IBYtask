@@ -92,4 +92,17 @@ Tested Day 2's one-off "Notepad titles hurt purity" finding properly — across 
 Checked whether the *timing* of event types within an execution (not totals, already covered on Day 1) fingerprints a family — e.g. does keystroke activity cluster early or late. Mostly negative: per-family deviations from the overall timing baseline are small (mostly <0.15 on a 0–1 scale) and noisy. One nice cross-check: `app_switch` events cluster earliest overall (centroid 0.36 vs ~0.5–0.6 for everything else), which lines up with the boundary-neighborhood finding above. 予算差異分析 (budget variance) stood out again as later-loaded across several event types — but it's the same family Day 1 already flagged as easy (PowerPoint), not a new lead.
 **Conclusion:** activity rhythm doesn't add a new labeling signal — closes another avenue, same as window titles.
 
+### Hard-Case Analysis
+
+Built `explore_hard_cases.py` to fold every weak spot found so far into one difficulty score per execution – quiet restart, duration outlier, ambiguous app-set, missing OCR.
+Main finding – the difficulty here is broad but shallow. **74.4%** of executions have an app-set shared by 5+ families, but only **13.2%** carry two or more problems at once, and **zero out of 1,589** carry all four. Even the worst cases leave me at least one usable signal. 予算差異分析 is confirmed the easiest family (mean score **0.17**), 経費精算承認 the hardest (**1.23**).
+**Conclusion:** I don't need to solve one impossible worst case – I need a strong default for the ambiguous majority plus cheap fallbacks for the rare problems, since they almost never stack.
+
+### Segmentation Design
+
+Wrote the last two days up into `notes/segmentation_design.md` – the spec I'll build against tomorrow, not code yet.
+The main decision – **boundary detection and labeling have to be two separate stages**. That is exactly what my earlier rough segmenter got wrong: one "signature change" mechanism doing both jobs, which is why it hit 93.4% on boundaries but only **31.8%** on labels. App identity is a strong boundary signal and a useless label signal, so the two can't share a mechanism. Boundaries get the behavioural signals (transition density, weighted by transition type, snapped to the nearest real transition); labels get the content ones (document anchor first, then OCR).
+I also fixed the bar now instead of chasing it later – **≥85%** boundary hit rate (quiet restarts cap it near 87% anyway) and **≥60%** label purity, up from 31.8%.
+**Conclusion:** the whole design leans on OCR text being family-distinguishing, which Step 6 never actually proved – so Day 3 starts with a one-hour check of that assumption before I build anything on top of it.
+
 
